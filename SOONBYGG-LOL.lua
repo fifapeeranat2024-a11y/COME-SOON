@@ -1,56 +1,44 @@
--- [[ ARMOR MODULE - FIXED VERSION ]]
-local player = game.Players.LocalPlayer
-local workspace = game:GetService("Workspace")
+-- [[ ARMOR BACKEND - FIXED & ENCODED ]]
+local _0x1 = game.Players.LocalPlayer; local _0x2 = game:GetService("Workspace")
 
--- กำหนดค่าเริ่มต้นถ้ายังไม่มีการตั้งค่า
-if _G.AutoArmor == nil then _G.AutoArmor = true end 
+-- Fix nil values
+if _G.AutoArmor == nil then _G.AutoArmor = true end
 if _G.LastBuyTime == nil then _G.LastBuyTime = 0 end
 
-local ArmorPos = CFrame.new(-934.025, -28.149, 570.549)
+local _0x3 = CFrame.new(-934.025, -28.149, 570.549)
 
-local function getArmorValue()
-    local df = player:FindFirstChild("DataFolder")
-    local info = df and df:FindFirstChild("Information")
-    local armor = info and info:FindFirstChild("ArmorSave")
-    return armor and tonumber(armor.Value) or 0
+local function _0x4()
+    local d = _0x1:FindFirstChild("\68\97\116\97\70\111\108\100\101\114") -- DataFolder
+    local i = d and d:FindFirstChild("\73\110\102\111\114\109\97\116\105\111\110") -- Information
+    local a = i and i:FindFirstChild("\65\114\109\111\114\83\97\118\101") -- ArmorSave
+    return a and tonumber(a.Value) or 0
 end
 
-local function mainLoop()
-    print("Module Loaded & Running...")
+local function _0x5()
     while true do
-        task.wait(2)
+        task.wait(1.5)
         if _G.AutoArmor == true then
-            local char = player.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            local currentArmor = getArmorValue()
-            
-            if root and currentArmor < 30 and (tick() - _G.LastBuyTime) > 10 then
-                print("Armor Low (" .. currentArmor .. ") - Teleporting to Shop")
-                local oldPos = root.CFrame
-                root.CFrame = ArmorPos + Vector3.new(0, 3, 0)
-                
-                task.wait(0.8)
-                local buyCount = 0
-                repeat
-                    for _, shopItem in pairs(workspace.Ignored.Shop:GetChildren()) do
-                        local part = shopItem:FindFirstChildWhichIsA("BasePart")
-                        if part and (part.Position - root.Position).Magnitude < 15 then
-                            local cd = shopItem:FindFirstChildWhichIsA("ClickDetector", true)
-                            if cd then 
-                                fireclickdetector(cd)
-                                task.wait(0.4)
+            local c = _0x1.Character; local r = c and c:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")
+            if r then
+                local cur = _0x4(); local now = tick()
+                if cur < 30 and (now - _G.LastBuyTime) > 10 then
+                    local old = r.CFrame; r.CFrame = _0x3 + Vector3.new(0, 3, 0)
+                    task.wait(0.8)
+                    local loop = 0
+                    repeat
+                        for _, v in pairs(_0x2.Ignored.Shop:GetChildren()) do
+                            local p = v:FindFirstChildWhichIsA("\66\97\115\101\80\97\114\116")
+                            if p and (p.Position - r.Position).Magnitude < 20 then
+                                local cd = v:FindFirstChildWhichIsA("\67\108\105\99\107\68\101\116\101\99\116\111\114", true)
+                                if cd then fireclickdetector(cd) task.wait(0.3) end
                             end
                         end
-                    end
-                    buyCount = buyCount + 1
-                until getArmorValue() >= 45 or buyCount >= 5 or _G.AutoArmor == false
-                
-                _G.LastBuyTime = tick()
-                root.CFrame = oldPos
-                print("Armor Refilled! Returning...")
+                        loop = loop + 1
+                    until _0x4() >= 45 or loop >= 5 or _G.AutoArmor == false
+                    _G.LastBuyTime = tick(); r.CFrame = old; task.wait(2)
+                end
             end
         end
     end
 end
-
-task.spawn(mainLoop)
+task.spawn(_0x5)
